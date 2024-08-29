@@ -53,13 +53,16 @@
         .Terminado {
             background-color: rgb(211, 75, 75);
         }
+        .Zombie {
+            background-color: rgb(150, 131, 131);
+        }
 
     </style>
 </head>
 <body>
     <div class="contenedor">
         <div class="contenedor-input">
-            <h1>Process Scheduler Simulation</h1>
+            <h1>Emulador de estados del procesador</h1>
             <label for="id">Process ID:</label>
             <input type="text" id="id" required autocomplete="off">
             <label for="time">time:</label>
@@ -101,13 +104,11 @@ class Proceso {
         return new Promise((resolve, reject) => {
             if (this.dependencies) {
                 reject(new Error("dependencia"));
-                this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
 
                 return;
             }
             console.log(this.time)
             if (this.time > 3000) {
-                this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
 
                 setTimeout(() => {
                     reject(new Error("tiempo"));
@@ -117,9 +118,16 @@ class Proceso {
 
             setTimeout(resolve, maxTime);
         }).then(() => {
-            this.estado = 'Terminado';
+            console.log(Math.trunc(Math.random()*3))
+            if(Math.trunc(Math.random()*7) === 2){
+                this.estado = 'Zombie';
+                console.log(`Proceso ${this.id} esta modo zombie.`);
+                changeLogM(this.id, this.time, this.dependencies, this.estado);
+            }else{
+                this.estado = 'Terminado';
             console.log(`Proceso ${this.id} ha terminado.`);
             changeLogM(this.id, this.time, this.dependencies, this.estado);
+            }
         });
     }
 }
@@ -156,24 +164,26 @@ class Scheduler {
         proceso.estado = 'Bloqueado';
         this.listaBloqueado.push(proceso);
         changeLogM(proceso.id, proceso.time, proceso.dependencies, proceso.estado);
-
+        console.log(error)
         if (error.message === "tiempo") {
-
+           
             setTimeout(()=>{
+                this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
+                this.programar(); 
                 proceso.time = 3000; // Restablecer el tiempo para volver a intentarlo
                 this.listaBloqueado = this.listaBloqueado.filter(p => p.id !== proceso.id);
                 this.agregarProceso(proceso);
             }, 1500)
         } else {
+            this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
+            this.programar();
             const checkInterval = setInterval(() => {
                 const statusLabel = document.getElementById(`status-label${proceso.dependencies}`);    
                 console.log(dependencies)
                 console.log(statusLabel)
                 console.log(statusLabel.innerText)
 
-                this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
-                if (statusLabel && statusLabel.innerText === "Terminado") {
-                    console.log("hola")
+                if (statusLabel && (statusLabel.innerText === "Terminado" || statusLabel.innerText === "Zomnbie" )) {
                     clearInterval(checkInterval);
                     proceso.dependencies = null
                     this.listaBloqueado = this.listaBloqueado.filter(p => p.id !== proceso.id);
