@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emulador de procesos</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .log-father {
+            display: grid;
+            grid-template-columns: 20% 20% 20% 20%; /* Ajusta las columnas a fracciones iguales */
+            max-width: 3000px;
+            white-space: normal; /* Permite el salto de línea */
+            word-wrap: break-word; /* Rompe palabras largas */
+            gap: 20px; /* Espacio entre columnas */
+        }
+
+        .contenedor {
+            position: absolute;
+            display: grid;
+            grid-template-rows: 200px auto;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 80%;
+            width: 90%;
+            align-self: center;
+        }
+        .contenedor-input {
+            height: 200px
+        }
+
+        .log { 
+            display: none;
+            height: 150px;
+            width: 150px;
+            background-color: rgb(119, 225, 225);
+            padding: 5px;
+            border-radius: 5px;
+            margin: 10px;
+        }
+        .info {
+            margin-top: 10px;
+        }
+        .Listo {
+            background-color: rgb(52, 192, 52);
+        }
+
+        .Ejecutando {
+            background-color: rgb(210, 210, 30);
+        }
+
+        .Terminado {
+            background-color: rgb(211, 75, 75);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <div class="contenedor-input">
+            <h1>Process Scheduler Simulation</h1>
+            <label for="id">Process ID:</label>
+            <input type="text" id="id" required autocomplete="off">
+            <label for="time">time:</label>
+            <input type="number" id="time" min="1" required>
+            <label for="dependencies">Dependencies</label>
+            <input type="text" id="dependencies">
+            <button id="addProcess">Add Process</button>
+            <button id="run">Run</button>
+        </div>
+        <div class="log-father">
+            <div class="log" id="log">
+                <div class="info"><label>id: </label><label id="id-label"></label></div>
+                <div class="info"><label>time: </label><label id="time-label"></label></div>
+                <div class="info"><label>dependencies: </label><label id="dependencies-label"></label></div>
+                <div class="info"><label>status: </label><label id="status-label"></label></div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+<script>
+class Proceso {
+    constructor(id, time, dependencies, estado) {
+        this.id = id;
+        this.time = time;
+        this.dependencies = dependencies;
+        this.estado = estado; // Nuevo, Listo, Ejecutando, Bloqueado, Terminado
+    }
+
+    async ejecutar(maxTime) {
+        this.estado = 'Ejecutando';
+        console.log(`Proceso ${this.id} está ejecutando.`);
+        changeLogM(this.id, this.time, this.dependencies, this.estado);
+
+        // Simula el tiempo que el proceso está en ejecución    
+        return new Promise((resolve, reject) => {
+            if (this.dependencies) {
+                reject(new Error("dependencia"));
+                this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
+
+                return;
+            }
+            console.log(this.time)
+            if (this.time > 3000) {
+                this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
+
+                setTimeout(() => {
+                    reject(new Error("tiempo"));
+                }, maxTime);
+                return;
+            }
+
+            setTimeout(resolve, maxTime);
+        }).then(() => {
+            this.estado = 'Terminado';
+            console.log(`Proceso ${this.id} ha terminado.`);
+            changeLogM(this.id, this.time, this.dependencies, this.estado);
+        });
+    }
+}
+
+class Scheduler {
+    constructor(cores) {
+        this.listaListos = [];
+        this.cores = cores; // Número de núcleos disponibles
+        this.procesosActuales = []; // Array para manejar procesos en ejecución
+        this.listaBloqueado = [];
+        this.maxTime = 3000;
+    }
+
+    agregarProceso(proceso) {
+        proceso.estado = 'Listo';
+        this.listaListos.push(proceso);
+        console.log(`Proceso ${proceso.id} agregado a la lista de listos.`);
+        changeLogM(proceso.id, proceso.time, proceso.dependencies, proceso.estado);
+        this.programar();
+    }
+
+    async programar() {
+        while (this.procesosActuales.length < this.cores && this.listaListos.length > 0) {
+            const proceso = this.listaListos.shift();
+            this.procesosActuales.push(proceso);
+            console.log(`Proceso ${proceso.id} está ahora ejecutando.`);
+            proceso.ejecutar(this.maxTime)
+                .then(() => this.terminarProceso(proceso))
+                .catch((error) => this.bloquearProceso(proceso, error));
+        }
+    }
+
+    bloquearProceso(proceso, error) {
+        proceso.estado = 'Bloqueado';
+        this.listaBloqueado.push(proceso);
+        changeLogM(proceso.id, proceso.time, proceso.dependencies, proceso.estado);
+
+        if (error.message === "tiempo") {
+
+            setTimeout(()=>{
+                proceso.time = 3000; // Restablecer el tiempo para volver a intentarlo
+                this.listaBloqueado = this.listaBloqueado.filter(p => p.id !== proceso.id);
+                this.agregarProceso(proceso);
+            }, 1500)
+        } else {
+            const checkInterval = setInterval(() => {
+                const statusLabel = document.getElementById(`status-label${proceso.dependencies}`);    
+                console.log(dependencies)
+                console.log(statusLabel)
+                console.log(statusLabel.innerText)
+
+                this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
+                if (statusLabel && statusLabel.innerText === "Terminado") {
+                    console.log("hola")
+                    clearInterval(checkInterval);
+                    proceso.dependencies = null
+                    this.listaBloqueado = this.listaBloqueado.filter(p => p.id !== proceso.id);
+                    
+                    this.agregarProceso(proceso);
+                }
+            }, 1000); // Chequea cada segundo
+        }
+    }
+
+    terminarProceso(proceso) {
+        this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
+        console.log(`Proceso ${proceso.id} ha terminado y fue removido de los procesos actuales.`);
+        this.programar(); // Intenta ejecutar el siguiente proceso
+    }
+}
+
+const scheduler = new Scheduler(2);
+ // Aquí estableces la cantidad de núcleos
+
+
+
+        function changeLogM(id, time, dependencies, status) {
+            const logClone = document.getElementById(id);
+            if (logClone) {
+                logClone.querySelector(`#id-label${id}`).textContent = id;
+                logClone.querySelector(`#time-label${id}`).textContent = time;
+                logClone.querySelector(`#dependencies-label${id}`).textContent = dependencies;
+                logClone.querySelector(`#status-label${id}`).textContent = status;
+                logClone.classList = `log clonado ${status}`
+            } else {
+                console.error(`No se encontró un elemento con el id ${id}`);
+            }
+        }
+
+
+
+        function log(id, time, dependencies, status) {
+            const logDiv = document.getElementById('log');
+            const logClone = logDiv.cloneNode(true);
+            logClone.classList.add("clonado")
+            logClone.id = id
+            logClone.style.display = "block"
+            document.querySelector(".log-father").appendChild(logClone)
+            logClone.querySelector("#id-label").id = `id-label${id}`;
+            logClone.querySelector("#time-label").id = `time-label${id}`;
+            logClone.querySelector("#dependencies-label").id = `dependencies-label${id}`;
+            logClone.querySelector("#status-label").id = `status-label${id}`;
+            changeLogM(id, time, dependencies, status)
+        }
+
+
+
+
+
+
+        document.getElementById("id").addEventListener("blur", (event) => {
+            const inputValue = event.target.value; // Obtiene el valor ingresado en el campo
+            const existingElement = document.getElementById(inputValue); // Busca si hay un elemento con ese id
+
+            if (existingElement) {
+                alert("El ID ya existe.");
+                event.target.value = ""; // Opcional: Limpia el campo de entrada
+            }
+        });
+
+
+
+        processes = []
+
+        document.getElementById('addProcess').addEventListener('click', function() {
+            let input = document.getElementById("id")
+            if(input.value != ""){
+                console.log("el input" + input)
+                const id = document.getElementById('id').value;
+                const time = document.getElementById('time').value;
+                const dependencies = document.getElementById('dependencies').value;
+                console.log(dependencies)
+                console.log(time)
+                processes.push(new Proceso(id, time, dependencies));
+
+                log(id, time, dependencies, "nuevo");
+                input.value = ""
+                document.getElementById("time").value = "";
+                document.getElementById("dependencies").value = "";
+            }
+
+        });
+
+        document.getElementById('run').addEventListener('click', function() {
+            processes.forEach(process => {
+                scheduler.agregarProceso(process);
+            });
+            processes = []
+        });
+
+    </script>
+</body>
+</html>
