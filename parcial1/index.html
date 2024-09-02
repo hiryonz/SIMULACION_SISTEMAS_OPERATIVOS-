@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emulador de procesos</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"  crossorigin="anonymous">
+
+</head>
+<body>
+    <div class="core-contenedor">
+        <label for="cores">cantidad de nucleos:</label>
+        <input type="number" id="cores" value="1" required autocomplete="off" maxlength="2">
+    </div>
+    <div class="contenedor">
+        <div class="contenedor-input">
+            <h1>Simulador de estados de un proceso</h1>
+            <label for="id">Numero ID:</label>
+            <input type="text" maxlength="10"  id="id" required autocomplete="off">
+            <label for="time">tiempo:</label>
+            <input type="number" maxlength="10" id="time" max="10" autocomplete="off">
+            <label for="dependencies">Dependencies:</label>
+            <input type="text" maxlength="10" id="dependencies" autocomplete="off">
+            <div class="btn-contenedor">
+                <button class="btn btn-light" id="addProcess">Add Process</button>
+                <button class="btn btn-light" id="run">Run</button>
+                <button class="btn btn-danger" id="clear">clear</button>
+
+            </div>
+        </div>
+        <div class="log-father">
+            <div class="log" id="log">
+                <div class="info"><label>id: </label><label id="id-label"></label></div>
+                <div class="info"><label>time: </label><label id="time-label"></label></div>
+                <div class="info"><label>dependencies: </label><label id="dependencies-label"></label></div>
+                <div class="info"><label>status: </label><label id="status-label"></label></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="js/script.js"></script>
+    <script src="classes/Proceso.js"></script>
+    <script src="classes/Scheduler.js"></script>
+</body>
+</html>

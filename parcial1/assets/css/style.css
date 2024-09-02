@@ -1,0 +1,81 @@
+body  { 
+    background-color: rgb(213, 231, 248) !important;  
+    display: flex;
+    flex-wrap: wrap;
+}
+.log-father {
+    display: grid;
+    grid-template-columns: 20% 20% 20% 20%; /* Ajusta las columnas a fracciones iguales */
+    max-width: 3000px;
+    height: fit-content;
+    white-space: normal; /* Permite el salto de línea */
+    word-wrap: break-word; /* Rompe palabras largas */
+    gap: 20px; /* Espacio entre columnas */
+}
+
+.contenedor {
+    display: grid;
+    grid-template-rows: 200px auto;
+    margin-left: 10%;
+    align-items: center;
+    height: fit-content;
+    min-height: 80%;
+    width: fit-content;
+    min-width: 80%;
+    align-self: center;
+    background-color: rgb(212, 227, 240);
+    border-radius: 7px;
+    box-shadow:  10px 10px 10px rgb(183, 197, 208);
+    padding: 10px;
+}
+.contenedor-input {
+    height: 200px
+}
+.btn-contenedor {
+    margin-top: 12px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    gap: 15px;
+}
+.core-contenedor {
+    margin: 10px;
+    margin-left: 13%;
+}
+.btn{
+    width: 120px;
+}
+input {
+    border-radius: 7px;
+    border: solid 0.5px
+}
+#cores {
+    width: 70px;
+}
+
+.log { 
+    display: none;
+    height: fit-content;
+    width: 150px;
+    background-color: rgb(119, 225, 225);
+    padding: 5px;
+    border-radius: 5px;
+    margin: 10px;
+}
+.info {
+    margin-top: 10px;
+}
+.Listo {
+    background-color: rgb(52, 192, 52);
+}
+
+.Ejecutando {
+    background-color: rgb(210, 210, 30);
+}
+
+.Terminado {
+    background-color: rgb(177, 73, 73);
+}
+.Error {
+    background-color: rgb(255, 0, 0);
+}
