@@ -1,9 +1,7 @@
 function getCores(event) {
     if(event){
-        console.log("no existe")
         return new Scheduler(event.target.value);
     }else {
-        console.log("no existe")
         return new Scheduler(1)
     }
 }
@@ -33,11 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function changeLogM(id, time, dependencies, status) {
     const logClone = document.getElementById(id);
+    if(time === 0){
+        time = 3000
+    }
     if (logClone) {
-        logClone.querySelector(`#id-label${id}`).textContent = id;
-        logClone.querySelector(`#time-label${id}`).textContent = time;
-        logClone.querySelector(`#dependencies-label${id}`).textContent = dependencies;
-        logClone.querySelector(`#status-label${id}`).textContent = status;
+        logClone.querySelector(`#id-label${id}`).textContent = " " + id;
+        logClone.querySelector(`#time-label${id}`).textContent = " " + time/1000 + "s";
+        logClone.querySelector(`#dependencies-label${id}`).textContent = " " + dependencies;
+        logClone.querySelector(`#status-label${id}`).textContent = " " + status;
         logClone.classList = `log clonado ${status}`
     } else {
         console.error(`No se encontró un elemento con el id ${id}`);
@@ -70,17 +71,16 @@ const timeE = document.getElementById('time');
 const dependenciesE = document.getElementById('dependencies');
 
 
-const add = document.getElementById('addProcess');
 
-add.addEventListener('click', function() {
+
+
+function add() {
     let input = document.getElementById("id")
     if(input.value != ""){
-        console.log("el input" + input)
         const id = idE.value;
-        const time = timeE.value;
+        const time = timeE.value * 1000;
         const dependencies = dependenciesE.value;
-        console.log(dependencies)
-        console.log(time)
+
         processes.push(new Proceso(id, time, dependencies, "nuevo"));
 
         log(id, time, dependencies, "nuevo");
@@ -89,12 +89,16 @@ add.addEventListener('click', function() {
         document.getElementById("dependencies").value = "";
     }
 
-});
+}
+
+
 
 document.getElementById('run').addEventListener('click', function() {
+    let cont = processes.length
     processes.forEach(process => {
-        console.log(process)
-        scheduler.agregarProceso(process);
+        scheduler.agregarProceso(process, cont);
+        cont--
+        console.log("valor de cont= " +cont)
     });
     processes = []
 });
@@ -105,30 +109,41 @@ document.getElementById('clear').addEventListener("click", () => {
 })
 
 
-idE.addEventListener("keydown", (event) => {
-    if (event.key === 'Enter') {
-        const inputValue = event.target.value; // Obtiene el valor ingresado en el campo
-        const existingElement = document.getElementById(inputValue); // Busca si hay un elemento con ese id
-    
+
+function verifyInput(event) {
+    if (event.key === 'Enter' || event.type === "click") {
+        const existingElement = document.getElementById(idE.value); // Busca si hay un elemento con ese id
+        console.log(idE)
+        console.log(existingElement)
+        if(idE.value === ""){
+            document.querySelector(".id").classList.add("error")
+        }
         if (existingElement) {
             alert("El ID ya existe.");
-            event.target.value = ""; // Opcional: Limpia el campo de entrada
+            idE.value = ""; // Opcional: Limpia el campo de entrada
         }else {
-            add.click();
+            add();
         }
     }
-    
+}
+
+idE.addEventListener("change", () => {
+    document.querySelector(".id").classList.remove("error")
+})
+
+
+document.getElementById('addProcess').addEventListener('click', (event) => {
+    verifyInput(event);
+});;
+idE.addEventListener("keydown", (event) => {
+    verifyInput(event);
 })
 timeE.addEventListener("keydown", (event) => {
-    if (event.key === 'Enter') {
-        add.click();
-
-    }
+    verifyInput(event);
 })
 dependenciesE.addEventListener("keydown", (event) => {
-    if (event.key === 'Enter') {
-        add.click();
-    }
+    verifyInput(event);
+
 })
 
 

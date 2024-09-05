@@ -5,12 +5,12 @@ body  {
 }
 .log-father {
     display: grid;
-    grid-template-columns: 20% 20% 20% 20%; /* Ajusta las columnas a fracciones iguales */
+    grid-template-columns: 20% 20% 20% 20% 20%; /* Ajusta las columnas a fracciones iguales */
     max-width: 3000px;
     height: fit-content;
     white-space: normal; /* Permite el salto de línea */
     word-wrap: break-word; /* Rompe palabras largas */
-    gap: 20px; /* Espacio entre columnas */
+    gap: 0.5%; /* Espacio entre columnas */
 }
 
 .contenedor {
@@ -78,4 +78,8 @@ input {
 }
 .Error {
     background-color: rgb(255, 0, 0);
+}
+#id.error {
+    border: solid 2px;
+    border-color: rgb(225, 56, 56);
 }

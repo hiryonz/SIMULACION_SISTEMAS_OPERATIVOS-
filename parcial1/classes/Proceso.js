@@ -6,30 +6,34 @@ class Proceso {
         this.estado = estado; // Nuevo, Listo, Ejecutando, Bloqueado, Terminado
     }
 
-    async ejecutar(maxTime) {
+    async ejecutar(maxTime, procesoListo) {
         this.estado = 'Ejecutando';
-        console.log(`Proceso ${this.id} está ejecutando.`);
         changeLogM(this.id, this.time, this.dependencies, this.estado);
 
-        // Simula el tiempo que el proceso está en ejecución    
         return new Promise((resolve, reject) => {
             if (this.dependencies) {
                 reject(new Error("dependencia"));
-
+                
                 return;
             }
+            // Simula el tiempo que el proceso está en ejecución   
             console.log(this.time)
-            if (this.time > 3000) {
+            console.log(procesoListo) 
+            if (this.time > 3000 && procesoListo != 0) {
+                console.log("entro al reject")
                 setTimeout(() => {
                     reject(new Error("tiempo"));
-                }, maxTime);
+                }, 2700);
                 return;
             }
+            if (this.time > 3000 && procesoListo == 0) {
+                maxTime = this.time;
+            }
+
 
             setTimeout(resolve, maxTime);
         }).then(() => {
             this.estado = 'Terminado';
-            console.log(`Proceso ${this.id} ha terminado.`);
             changeLogM(this.id, this.time, this.dependencies, this.estado);
         });
     }

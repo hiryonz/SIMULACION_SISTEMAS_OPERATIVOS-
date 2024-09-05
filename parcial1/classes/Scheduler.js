@@ -7,27 +7,33 @@ class Scheduler {
         this.maxTime = 3000;
     }
 
-    agregarProceso(proceso) {
-        console.log(this.cores)
-        proceso.estado = 'Listo';
-        this.listaListos.push(proceso);
-        console.log(`Proceso ${proceso.id} agregado a la lista de listos.`);
-        changeLogM(proceso.id, proceso.time, proceso.dependencies, proceso.estado);
-        this.programar();
+    agregarProceso(proceso, cont) {
+            proceso.estado = 'Listo';
+            this.listaListos.push(proceso);
+            changeLogM(proceso.id, proceso.time, proceso.dependencies, proceso.estado);
+            if(cont===1){
+                this.programar();
+            }
+    
     }
 
     async programar() {
+        console.log(this.listaListos)
         while (this.procesosActuales.length < this.cores && this.listaListos.length > 0) {
+            console.log(this.listaListos.length)
             const proceso = this.listaListos.shift();
             this.procesosActuales.push(proceso);
-            console.log(`Proceso ${proceso.id} está ahora ejecutando.`);
-            proceso.ejecutar(this.maxTime, this.procesosActuales)
+            console.log(proceso)
+            console.log(this.maxTime)
+            console.log(this.listaListos.length)
+            proceso.ejecutar(this.maxTime, this.listaListos.length)
                 .then(() => this.terminarProceso(proceso))
                 .catch((error) => this.bloquearProceso(proceso, error));
         }
     }
 
     bloquearProceso(proceso, error) {
+        this.programar();
         proceso.estado = 'Bloqueado';
         this.listaBloqueado.push(proceso);
         changeLogM(proceso.id, proceso.time, proceso.dependencies, proceso.estado);
@@ -36,7 +42,9 @@ class Scheduler {
             this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
             console.log(error.message+ " error de tiempo")
             setTimeout(()=>{
-                proceso.time = 3000; // Restablecer el tiempo para volver a intentarlo
+                if(this.listaListos.length > 0){
+                    proceso.time -= this.maxTime; // Restablecer el tiempo para volver a intentarlo
+                }
                 this.listaBloqueado = this.listaBloqueado.filter(p => p.id !== proceso.id);
                 this.agregarProceso(proceso);
             }, 1500)
@@ -67,7 +75,9 @@ class Scheduler {
 
     terminarProceso(proceso) {
         this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
-        console.log(`Proceso ${proceso.id} ha terminado y fue removido de los procesos actuales.`);
+        setTimeout(()=> {
+            document.getElementById(proceso.id).remove();
+        }, 1500)
         this.programar(); // Intenta ejecutar el siguiente proceso
     }
 }
