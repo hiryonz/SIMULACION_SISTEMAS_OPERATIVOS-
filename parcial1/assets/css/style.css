@@ -5,7 +5,7 @@ body  {
 }
 .log-father {
     display: grid;
-    grid-template-columns: 20% 20% 20% 20% 20%; /* Ajusta las columnas a fracciones iguales */
+    grid-template-columns: 18% 18% 18% 18% 18%; /* Ajusta las columnas a fracciones iguales */
     max-width: 3000px;
     height: fit-content;
     white-space: normal; /* Permite el salto de línea */
@@ -15,7 +15,7 @@ body  {
 
 .contenedor {
     display: grid;
-    grid-template-rows: 200px auto;
+    grid-template-rows: 100px auto;
     margin-left: 10%;
     align-items: center;
     height: fit-content;
@@ -29,7 +29,11 @@ body  {
     padding: 10px;
 }
 .contenedor-input {
-    height: 200px
+    height: 200px;
+    opacity: 1;
+    height: fit-content;
+    pointer-events: all;
+    transition: all 0.5s ease;
 }
 .btn-contenedor {
     margin-top: 12px;
@@ -38,7 +42,7 @@ body  {
     display: flex;
     gap: 15px;
 }
-.core-contenedor {
+.contenedor-configuration {
     margin: 10px;
     margin-left: 13%;
 }
@@ -49,7 +53,7 @@ input {
     border-radius: 7px;
     border: solid 0.5px
 }
-#cores {
+#coresInput {
     width: 70px;
 }
 
@@ -83,3 +87,73 @@ input {
     border: solid 2px;
     border-color: rgb(225, 56, 56);
 }
+
+
+.example-btn {
+    width: 150px;
+    margin: 0.2em;
+}
+
+.example-btn.active {
+    background-color: rgb(182, 189, 199);
+}
+
+.button-control {
+    margin-bottom: 10px
+}
+
+.button-control button {
+    width: fit-content;
+}
+
+.contenedor-pruebas {
+    opacity: 0;
+    height: 0px;
+    pointer-events: none;
+    transition: all 0.5s ease;
+}
+
+.contenedor.active .contenedor-pruebas {
+    opacity: 1;
+    height: fit-content;
+    pointer-events: all;
+
+}
+
+.contenedor.active .contenedor-input {
+    opacity: 0;
+    height: 0px;
+    pointer-events: none;
+}
+
+
+.contenedor-input label {
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+.contenedor-input .time {
+    width: fit-content;
+}
+
+
+
+@media (width<= 970px) {
+    .contenedor-input input {
+        width: calc(100% - 150px);  
+    }
+    .contenedor-input .time {
+        width: 100px;
+    }
+
+    .log-father {
+        grid-template-columns: 30% 30% 30%; 
+
+    }
+
+
+}
+
+
+
+

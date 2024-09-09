@@ -1,13 +1,13 @@
-function getCores(event) {
-    if(event){
-        return new Scheduler(event.target.value);
+function ConfigureScheduler(coresValue, timeValue) {
+    if(coresValue && timeValue){
+        return new Scheduler(coresValue, timeValue );
     }else {
         return new Scheduler(1)
     }
 }
 
 
-function validateCores(event, length) {
+function validateNumber(event, length) {
     const input = event.target;
     const value = input.value;
 
@@ -17,13 +17,16 @@ function validateCores(event, length) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('cores').addEventListener('input', (event) => validateCores(event, 2));
+    document.getElementById('coresInput').addEventListener('input', (event) => validateNumber(event, 2));
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('timeInput').addEventListener('input', (event) => validateNumber(event, 2));
 });
 
 
-
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('time').addEventListener('input', (event) => validateCores(event, 10));
+    document.getElementById('time').addEventListener('input', (event) => validateNumber(event, 10));
 });
 
 
@@ -31,9 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function changeLogM(id, time, dependencies, status) {
     const logClone = document.getElementById(id);
-    if(time === 0){
-        time = 3000
-    }
+
     if (logClone) {
         logClone.querySelector(`#id-label${id}`).textContent = " " + id;
         logClone.querySelector(`#time-label${id}`).textContent = " " + time/1000 + "s";
@@ -71,29 +72,128 @@ const timeE = document.getElementById('time');
 const dependenciesE = document.getElementById('dependencies');
 
 
+const 
+word = document.getElementById("word"),
+excel = document.getElementById("excel"),
+chromes = document.getElementById("chrome"),
+clickear = document.getElementById("clickear");
+
+word.addEventListener("click", function() {
+    Verificacion();
+ 
+     if(!this.classList.contains("active")){
+         Add("3214", 1000, "");
+         Add("3215", 5000, "");
+         Add("3216", 3000, "3217");
+         Add("3217", 11000, "");
+         Add("3218", 7000, "");
+         Add("3219", 2000, "");
+         Add("3220", 3000, "3219");
+         Add("3221", 3000, "3220");
+         Add("3222", 3000, "");
+         Add("3223", 3000, "");
+     }
+     
+     this.classList.add("active")
+ });
+
+excel.addEventListener("click", function() {
+    Verificacion();
+
+    if(!this.classList.contains("active")){
+        Add("2214", 1000, "");
+        Add("2215", 15000, "2223");
+        Add("2216", 2000, "");
+        Add("2217", 10000, "");
+        Add("2218", 5000, "2223");
+        Add("2219", 2000, "");
+        Add("2220", 3000, "2219");
+        Add("2221", 3000, "2216");
+        Add("2222", 1000, "");
+        Add("2223", 500, "");
+    }
+    
+    this.classList.add("active")
+});
+
+chromes.addEventListener("click", function() {
+    Verificacion();
+
+    if(!this.classList.contains("active")){
+        Add("4214", 10000, "4223");
+        Add("4215", 5000, "");
+        Add("4216", 3000, "4215");
+        Add("4217", 6000, "");
+        Add("4218", 4000, "");
+        Add("4219", 2000, "");
+        Add("4220", 2000, "4214");
+        Add("4221", 3000, "4223");
+        Add("4222", 23000, "");
+        Add("4223", 3000, "");
+    }
+    
+    this.classList.add("active")
+});
+
+clickear.addEventListener("click", function() {
+    Verificacion();
+
+    if(!this.classList.contains("active")){
+        Add("5214", 2000, "");
+        Add("5215", 5000, "5214");
+        Add("5216", 3000, "5217");
+        Add("5217", 3500, "");
+        Add("5218", 7000, "");
+        Add("5219", 2000, "");
+        Add("5220", 3000, "5217");
+        Add("5221", 9000, "");
+        Add("5222", 5000, "5223");
+        Add("5223", 2000, "");
+    }
+    
+    this.classList.add("active")
+});
 
 
 
-function add() {
+function Verificacion() {
+    const hijosLog = document.querySelector(".log-father").childElementCount;
+    if(hijosLog === 1){
+        word.classList.remove("active");
+        excel.classList.remove("active");
+        chromes.classList.remove("active");
+        clickear.classList.remove("active");
+    }
+}
+
+function CollectData() {
     let input = document.getElementById("id")
     if(input.value != ""){
         const id = idE.value;
-        const time = timeE.value * 1000;
+        let time = timeE.value * 1000;
         const dependencies = dependenciesE.value;
 
-        processes.push(new Proceso(id, time, dependencies, "nuevo"));
+        if(time === 0){
+            time = document.getElementById('timeInput').value * 1000
+        }
 
-        log(id, time, dependencies, "nuevo");
-        input.value = ""
+
+        Add(id, time, dependencies);
+
+        input.value = "";
         document.getElementById("time").value = "";
         document.getElementById("dependencies").value = "";
     }
+}
+
+function Add(id, time, dependencies) {
+        processes.push(new Proceso(id, time, dependencies, "nuevo"));
+        log(id, time, dependencies, "nuevo");
+    
 
 }
 
-
-
-document.getElementById('run').addEventListener('click', function() {
+function Run() {
     let cont = processes.length
     processes.forEach(process => {
         scheduler.agregarProceso(process, cont);
@@ -101,10 +201,17 @@ document.getElementById('run').addEventListener('click', function() {
         console.log("valor de cont= " +cont)
     });
     processes = []
-});
+}
+
+document.getElementById('run').addEventListener('click', Run);
+document.getElementById('run2').addEventListener('click', Run);
+
 
 
 document.getElementById('clear').addEventListener("click", () => {
+    window.location.reload();
+})
+document.getElementById('clear2').addEventListener("click", () => {
     window.location.reload();
 })
 
@@ -122,7 +229,7 @@ function verifyInput(event) {
             alert("El ID ya existe.");
             idE.value = ""; // Opcional: Limpia el campo de entrada
         }else {
-            add();
+            CollectData();
         }
     }
 }
@@ -145,6 +252,26 @@ dependenciesE.addEventListener("keydown", (event) => {
     verifyInput(event);
 
 })
+
+const pruebaBtn =  document.querySelector(".toggle");
+
+
+pruebaBtn.addEventListener("click", ToogleMenu);
+
+function ToogleMenu() {
+    document.querySelector(".contenedor").classList.toggle("active")
+    if(pruebaBtn.textContent === "Pruebas"){
+        pruebaBtn.textContent = "Procesos Manuales"
+    }else {
+        pruebaBtn.textContent = "Pruebas"
+
+    }
+}
+
+
+
+
+
 
 
 

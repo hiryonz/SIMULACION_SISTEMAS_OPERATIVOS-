@@ -9,16 +9,33 @@
 
 </head>
 <body>
-    <div class="core-contenedor">
-        <label for="cores">cantidad de nucleos:</label>
-        <input type="number" id="cores" value="1" required autocomplete="off" maxlength="2">
+    <div class="contenedor-configuration">
+        <label for="coresInput">cantidad de nucleos:</label>
+        <input type="number" id="coresInput" value="2" required autocomplete="off" maxlength="2">
+        <label for="timeInput">Tiempo maximo de cada proceso:</label>
+        <input type="number" id="timeInput" value="3" required autocomplete="off" maxlength="2">
     </div>
     <div class="contenedor">
+        <h1>Simulador de estados de un proceso</h1>
+        <div class="button-control">
+            <button class="btn btn-light toggle">Pruebas</button>
+
+        </div>
+        <div class="contenedor-pruebas">
+            <h1>Ejemplos</h1>
+            <button class="btn btn-light example-btn" id="word">microsoft word</button>
+            <button class="btn btn-light example-btn" id="excel">microsoft excel</button>
+            <button class="btn btn-light example-btn" id="chrome">google chrome</button>
+            <button class="btn btn-light example-btn" id="clickear">click</button>
+            <div class="btn-contenedor">
+                <button class="btn btn-light" id="run2">Run</button>
+                <button class="btn btn-danger" id="clear2">clear</button>
+            </div>
+        </div>
         <div class="contenedor-input">
-            <h1>Simulador de estados de un proceso</h1>
             <label for="id">Numero ID:</label>
             <input type="text" maxlength="10" class="id" id="id" required autocomplete="off">
-            <label for="time">tiempo:</label>
+            <label class="time" for="time">tiempo:</label>
             <input type="number" maxlength="10" id="time" max="10" autocomplete="off">
             <label for="dependencies">Dependencies:</label>
             <input type="text" maxlength="10" id="dependencies" autocomplete="off">
@@ -26,7 +43,6 @@
                 <button class="btn btn-light" id="addProcess">Add Process</button>
                 <button class="btn btn-light" id="run">Run</button>
                 <button class="btn btn-danger" id="clear">clear</button>
-
             </div>
         </div>
         <div class="log-father">

@@ -7,6 +7,8 @@ class Proceso {
     }
 
     async ejecutar(maxTime, procesoListo) {
+        let tiempoFinal;
+
         this.estado = 'Ejecutando';
         changeLogM(this.id, this.time, this.dependencies, this.estado);
 
@@ -17,21 +19,28 @@ class Proceso {
                 return;
             }
             // Simula el tiempo que el proceso está en ejecución   
-            console.log(this.time)
-            console.log(procesoListo) 
-            if (this.time > 3000 && procesoListo != 0) {
+            console.log(maxTime)
+            console.log("tiempo:"+this.time)
+
+            if(this.time < maxTime && this.time != 0){
+                tiempoFinal = this.time;
+            }else{
+                tiempoFinal = maxTime;
+            }
+
+            if (this.time > maxTime && procesoListo != 0) {
                 console.log("entro al reject")
                 setTimeout(() => {
                     reject(new Error("tiempo"));
-                }, 2700);
+                }, maxTime - 1000);
                 return;
             }
-            if (this.time > 3000 && procesoListo == 0) {
-                maxTime = this.time;
+            if (this.time > maxTime && procesoListo == 0) {
+                tiempoFinal = this.time;
             }
 
 
-            setTimeout(resolve, maxTime);
+            setTimeout(resolve, tiempoFinal);
         }).then(() => {
             this.estado = 'Terminado';
             changeLogM(this.id, this.time, this.dependencies, this.estado);
