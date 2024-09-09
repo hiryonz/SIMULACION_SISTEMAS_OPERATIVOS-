@@ -5,6 +5,7 @@ class Scheduler {
         this.procesosActuales = []; // Array para manejar procesos en ejecución
         this.listaBloqueado = [];
         this.maxTime = timeValue;
+        this.dependenciesResolved = [];
     }
 
     agregarProceso(proceso, cont) {
@@ -51,7 +52,7 @@ class Scheduler {
             this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
 
             const checkInterval = setInterval(() => {
-                const statusLabel = document.getElementById(`status-label${proceso.dependencies}`);  
+                //const statusLabel = document.getElementById(`status-label${proceso.dependencies}`);  
                 //cont++;
                 //if(cont === 10) {
                     //clearInterval(checkInterval);
@@ -59,7 +60,9 @@ class Scheduler {
                     //this.listaBloqueado.shift();
                     //changeLogM(proceso.id, proceso.time, proceso.dependencies, "Error");
                 //}
-                if (statusLabel && statusLabel.innerText === "Terminado") {
+
+                //statusLabel && statusLabel.innerText === "Terminado"
+                if (this.dependenciesResolved.includes(proceso.dependencies)) {
                     clearInterval(checkInterval);
                     this.listaBloqueado = this.listaBloqueado.filter(p => p.id !== proceso.id);
                     proceso.dependencies = ""
@@ -73,6 +76,7 @@ class Scheduler {
 
     terminarProceso(proceso) {
         this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
+        this.dependenciesResolved.push(proceso.id)
         setTimeout(()=> {
             document.getElementById(proceso.id).remove();
         }, 1500)
