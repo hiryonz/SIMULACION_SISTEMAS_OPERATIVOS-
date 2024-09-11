@@ -19,7 +19,9 @@ class Scheduler {
 
 
             if(cont===1){
-                this.programar();
+                setTimeout(() => {
+                    this.programar();
+                }, 1500)
             }
     
     }
@@ -66,15 +68,9 @@ class Scheduler {
             
             this.listaBloqueado.forEach(bloqueado => {
                 this.checkInterval[bloqueado.id] = setInterval(() => {
-
+                    console.log("pepe")
                     if (this.listaBloqueado.length === 0) {
-                        // Limpiar todos los intervalos si la lista está vacía
-                        for (const id in this.checkInterval) {
-                            if (this.checkInterval.hasOwnProperty(id)) {
-                                clearInterval(this.checkInterval[id]);
-                                delete this.checkInterval[id];
-                            }
-                        }
+                        console.log("hola")
                         return; // Salir del intervalo actual
                     }
             
