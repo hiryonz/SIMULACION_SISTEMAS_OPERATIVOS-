@@ -170,11 +170,20 @@ timeInput = document.getElementById('timeInput');
 
 
 
-coresInput.addEventListener("input", CallConfiguration);
+//coresInput.addEventListener("input", CallConfiguration);
+//timeInput.addEventListener("input", CallConfiguration);
+coresInput.addEventListener("blur", CallConfiguration);
+timeInput.addEventListener("blur", CallConfiguration);
 
-timeInput.addEventListener("input", CallConfiguration);
 
 function CallConfiguration(){
+    if(coresInput.value == 0){
+        coresInput.value = 1;       
+    } else if (timeInput.value == 0){
+        timeInput.value = 3;
+    }
+
+    console.log(coresInput.value, timeInput.value)
     scheduler = ConfigureScheduler(coresInput.value, timeInput.value*1000);
 }
 
