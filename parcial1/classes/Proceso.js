@@ -57,10 +57,7 @@ class Proceso {
             
 
             //setTimeout(resolve, tiempoFinal);
-        }).then(() => {
-            this.estado = 'Terminado';
-            changeLogM(this.id, this.time, this.dependencies, this.estado);
-        });
+        })
     }
 
 

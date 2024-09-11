@@ -101,6 +101,7 @@ class Scheduler {
         if( valorRandom === 5   ){
             changeLogM(proceso.id, proceso.time, proceso.dependencies, "Zombie");
         }else {
+            changeLogM(proceso.id, proceso.time, proceso.dependencies, "Terminado");
             setTimeout(()=> {
                 if(document.getElementById(proceso.id)){
                     document.getElementById(proceso.id).remove();
