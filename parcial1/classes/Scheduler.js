@@ -6,9 +6,12 @@ class Scheduler {
         this.listaBloqueado = [];
         this.maxTime = timeValue;
         this.dependenciesResolved = [];
+        this.checkInterval = {};
+        this.procesoUsado = null;
     }
 
     agregarProceso(proceso, cont) {
+            this.procesoUsado = proceso;
             proceso.estado = 'Listo';
             this.listaListos.push(proceso);
             changeLogM(proceso.id, proceso.time, proceso.dependencies, proceso.estado);
@@ -32,12 +35,21 @@ class Scheduler {
     }
 
     bloquearProceso(proceso, error) {
+        if(error.message === "cancelado"){
+            console.log("cancelado")
+            return;
+        }
+
+
+        this.procesoUsado = proceso;
         this.programar();
         proceso.estado = 'Bloqueado';
-        this.listaBloqueado.push(proceso);
+        
         changeLogM(proceso.id, proceso.time, proceso.dependencies, proceso.estado);
-        let cont = 0;
+
+
         if (error.message === "tiempo") {
+            this.listaBloqueado.push(proceso);
             this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
             console.log(error.message+ " error de tiempo")
             setTimeout(()=>{
@@ -48,41 +60,108 @@ class Scheduler {
                 this.agregarProceso(proceso, 1);
             }, 1500)
         } else {
-            console.log(error.message+ " error de dependencia")
+            this.listaBloqueado.push(proceso);
+            console.log(error.message + " error de dependencia " + proceso.id);
             this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
+            
+            this.listaBloqueado.forEach(bloqueado => {
+                this.checkInterval[bloqueado.id] = setInterval(() => {
 
-            const checkInterval = setInterval(() => {
-                //const statusLabel = document.getElementById(`status-label${proceso.dependencies}`);  
-                //cont++;
-                //if(cont === 10) {
-                    //clearInterval(checkInterval);
-                    //this.listaBloqueado = this.listaBloqueado.filter(p => p.id !== proceso.id);
-                    //this.listaBloqueado.shift();
-                    //changeLogM(proceso.id, proceso.time, proceso.dependencies, "Error");
-                //}
-
-                //statusLabel && statusLabel.innerText === "Terminado"
-                if (this.dependenciesResolved.includes(proceso.dependencies)) {
-                    clearInterval(checkInterval);
-                    this.listaBloqueado = this.listaBloqueado.filter(p => p.id !== proceso.id);
-                    proceso.dependencies = ""
-                    this.listaBloqueado = this.listaBloqueado.filter(p => p.id !== proceso.id);
-                    
-                    this.agregarProceso(proceso, 1);
-                }
-            }, 1000); // Chequea cada segundo
+                    if (this.listaBloqueado.length === 0) {
+                        // Limpiar todos los intervalos si la lista está vacía
+                        for (const id in this.checkInterval) {
+                            if (this.checkInterval.hasOwnProperty(id)) {
+                                clearInterval(this.checkInterval[id]);
+                                delete this.checkInterval[id];
+                            }
+                        }
+                        return; // Salir del intervalo actual
+                    }
+            
+                    if (this.dependenciesResolved.includes(bloqueado.dependencies)) {
+                        console.log(bloqueado.id);
+                        clearInterval(this.checkInterval[bloqueado.id]);
+                        delete this.checkInterval[bloqueado.id];
+                        this.listaBloqueado = this.listaBloqueado.filter(p => p.id !== proceso.id);
+                        proceso.dependencies = "";
+                        this.agregarProceso(proceso, 1);
+                    }
+                }, 1000); // Chequea cada segundo
+                
+            });
+            
         }
     }
 
     terminarProceso(proceso) {
+        this.procesoUsado = proceso;
+
+
+        const valorRandom = Math.floor(Math.random()*6);
+        if( valorRandom === 5   ){
+            changeLogM(proceso.id, proceso.time, proceso.dependencies, "Zombie");
+        }else {
+            setTimeout(()=> {
+                if(document.getElementById(proceso.id)){
+                    document.getElementById(proceso.id).remove();
+                }
+            }, 1500)
+        }
+        
+
         this.procesosActuales = this.procesosActuales.filter(p => p.id !== proceso.id);
         this.dependenciesResolved.push(proceso.id)
-        setTimeout(()=> {
-            document.getElementById(proceso.id).remove();
-        }, 1500)
         this.programar(); // Intenta ejecutar el siguiente proceso
     }
+
+
+    killProcess(id, estado) {
+        switch(estado) {
+            case "Bloqueado":
+                console.log("entro a kill Bloqueados afeura")
+                if(this.checkInterval){
+                    clearTimeout(this.checkInterval);
+                }
+                this.listaBloqueado = this.listaBloqueado.filter(p => p.id !== id);
+                document.getElementById(id).remove();
+                break;
+            case "Ejecutando":
+                console.log("ejecutando kill")
+                this.procesosActuales = this.procesosActuales.filter(p => p.id !== id);
+                document.getElementById(id).remove();
+                this.procesoUsado.cancelar(true)
+
+                break;
+            case "Listo":
+                console.log("listo")
+                this.listaListos = this.listaListos.filter(p => p.id !== id);
+                document.getElementById(id).remove();
+
+                break;
+            case "Nuevo":;
+            console.log("nuevo")
+                processes = processes.filter(p => p.id !== id)
+                document.getElementById(id).remove();
+                break;
+            case "Zombie":
+                document.getElementById(id).remove();
+        }   
+    }
 }
+
+
+
+function callCPU() {
+
+    const callingProgramar = setInterval(() => {
+        const hijosLog = document.querySelector(".log-father").childElementCount;
+        if(hijosLog === 1){
+            clearInterval(callingProgramar);
+        }
+        scheduler.programar();
+    }, 500)
+}
+
 
 let scheduler;
 const coresInput = document.getElementById('coresInput'),
@@ -100,7 +179,7 @@ function CallConfiguration(){
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    scheduler = new Scheduler(1)
+    CallConfiguration();
     // Aquí estableces la cantidad de núcleos
 })
 

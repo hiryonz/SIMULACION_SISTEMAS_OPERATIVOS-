@@ -83,6 +83,10 @@ input {
 .Error {
     background-color: rgb(255, 0, 0);
 }
+.Zombie {
+    background-color: rgb(142, 90, 90);
+
+}
 #id.error {
     border: solid 2px;
     border-color: rgb(225, 56, 56);
@@ -137,6 +141,25 @@ input {
 }
 
 
+.container-delete-btn {
+    display: grid;
+    grid-template-columns: 70% auto;
+}
+.delete-btn {
+    display: flex !important;
+    width: fit-content;
+    background-color: rgba(114, 216, 216, 0.283) !important;
+    border: none !important;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
+    margin-left: 8.5px;
+}
+
+.delete-btn:hover {
+    background-color: rgb(229, 108, 108) !important;
+
+}
 
 @media (width<= 970px) {
     .contenedor-input input {

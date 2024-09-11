@@ -7,14 +7,21 @@ function ConfigureScheduler(coresValue, timeValue) {
 }
 
 
-function validateNumber(event, length) {
-    const input = event.target;
-    const value = input.value;
+        function validateNumber(event, length) {
+            const input = event.target;
+            let value = input.value;
 
-    if (value.length > length) {
-        input.value = value.slice(0, 2);
-    }
-}
+            // Remover caracteres no numéricos (solo dígitos y signos)
+            value = value.replace(/[^1-9]/g, '');
+
+            // Limitar la longitud del valor
+            if (value.length > length) {
+                value = value.slice(0, length);
+            }
+
+            // Asegurarse de que el valor no sea negativo
+            input.value = Math.max(1, value);
+        }
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('coresInput').addEventListener('input', (event) => validateNumber(event, 2));
@@ -41,8 +48,6 @@ function changeLogM(id, time, dependencies, status) {
         logClone.querySelector(`#dependencies-label${id}`).textContent = " " + dependencies;
         logClone.querySelector(`#status-label${id}`).textContent = " " + status;
         logClone.classList = `log clonado ${status}`
-    } else {
-        console.error(`No se encontró un elemento con el id ${id}`);
     }
 }
 
@@ -59,11 +64,28 @@ function log(id, time, dependencies, status) {
     logClone.querySelector("#time-label").id = `time-label${id}`;
     logClone.querySelector("#dependencies-label").id = `dependencies-label${id}`;
     logClone.querySelector("#status-label").id = `status-label${id}`;
+    let deleteBtn = logClone.querySelector(".delete-btn")
+    deleteBtn.id = `delete-id${id}`
+
     changeLogM(id, time, dependencies, status)
+    createDelete(deleteBtn);
 }
 
 
+function createDelete(deleteBtn){
+    
+        const regex = /\d+$/;
+        deleteBtn.addEventListener("click", () => {
+            const newId = deleteBtn.id.match(regex);
+            const status = document.getElementById(`status-label${newId[0]}`).innerText;
+            console.log(status)
+            console.log(newId[0])
+            console.log(processes)
+            scheduler.killProcess(newId[0], status);
 
+        })
+
+}
 
 
 let processes = []
@@ -187,14 +209,16 @@ function CollectData() {
 }
 
 function Add(id, time, dependencies) {
-        processes.push(new Proceso(id, time, dependencies, "nuevo"));
-        log(id, time, dependencies, "nuevo");
-    
 
+        processes.push(new Proceso(id, time, dependencies, "Nuevo"));
+        log(id, time, dependencies, "Nuevo");
+        console.log(processes)
 }
 
 function Run() {
     let cont = processes.length
+    callCPU()
+
     processes.forEach(process => {
         scheduler.agregarProceso(process, cont);
         cont--
