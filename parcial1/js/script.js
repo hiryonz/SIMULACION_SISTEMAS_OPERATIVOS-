@@ -12,7 +12,7 @@ function ConfigureScheduler(coresValue, timeValue) {
             let value = input.value;
 
             // Remover caracteres no numéricos (solo dígitos y signos)
-            value = value.replace(/[^1-9]/g, '');
+            value = value.replace(/[^0-9]/g, '');
 
             // Limitar la longitud del valor
             if (value.length > length) {
