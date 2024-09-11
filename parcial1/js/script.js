@@ -19,17 +19,31 @@ function ConfigureScheduler(coresValue, timeValue) {
                 value = value.slice(0, length);
             }
 
+
             // Asegurarse de que el valor no sea negativo
-            input.value = Math.max(1, value);
+            input.value = Math.max(0, value);
         }
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('coresInput').addEventListener('input', (event) => validateNumber(event, 2));
+    document.getElementById('coresInput').addEventListener('blur', (event) => {
+        let input = event.target;
+        if(input.value == 0){
+            input.value = 1
+        }
+    }); 
 });
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('timeInput').addEventListener('input', (event) => validateNumber(event, 2));
+    document.getElementById('timeInput').addEventListener('blur', (event) => {
+        let input = event.target;
+        if(input.value == 0){
+            input.value = 1
+        }
+    });
 });
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
